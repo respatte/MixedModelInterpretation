@@ -1,20 +1,22 @@
 # LIBRARY IMPORTS ==================================================================================
 library(lme4)
 library(tidyverse)
+library(RColorBrewer)
+source("geom_flat_violin.R")
 
 # DATA GENERATION ==================================================================================
 df <- tibble(Participant = parse_factor(rep(1:100, 2), levels = NULL),
              Intervention = parse_factor(rep(c("Video Game", "Mindfulness Meditation"), 100),
                                          levels = c("Video Game",                # Reference level
                                                     "Mindfulness Meditation")),  # Comparison level
-             PrePost = parse_factor(c(rep("PreIntervention", 100),
-                                      rep("PostIntervention", 100)),
-                                    levels = c("PreIntervention",                # Reference level
-                                               "PostIntervention")),             # Comparison level
+             PrePost = parse_factor(c(rep("Pre Intervention", 100),
+                                      rep("Post Intervention", 100)),
+                                    levels = c("Pre Intervention",                # Reference level
+                                               "Post Intervention")),             # Comparison level
              StressLevel = 150 +
                0      * (Intervention == "Mindfulness Meditation") +
-               (-2)   * (PrePost == "PostIntervention") +
-               (-100) * (Intervention == "Mindfulness Meditation")*(PrePost == "PostIntervention") +
+               (-2)   * (PrePost == "Post Intervention") +
+               (-100) * (Intervention=="Mindfulness Meditation")*(PrePost=="Post Intervention") +
                rnorm(200, 0, 25) +      # General variance
                rep(rnorm(100, 0, 5), 2) # Participant-specific variance
 )
@@ -24,15 +26,50 @@ df <- tibble(Participant = parse_factor(rep(1:100, 2), levels = NULL),
 
 # DATA DESCRIPTION =================================================================================
 # Plot
-bplot <- ggplot(data = df,
-                aes(y = StressLevel,
-                    x = PrePost,
-                    fill = Intervention)) +
+barplot <- ggplot(data = df,
+                  aes(y = StressLevel,
+                      x = PrePost,
+                      fill = Intervention)) +
   geom_bar(stat = "summary", fun.y = "mean",
-           position = "dodge") +
+           position = "dodge",
+           width = .5) +
   geom_errorbar(stat = "summary", fun.data = "mean_se",
-                width = .5, position = position_dodge(.9))
-(bplot)
+                width = .25, position = position_dodge(.5),
+                lwd = .2) +
+  scale_fill_brewer(palette = "Dark2") +
+  theme_bw() +
+  theme(legend.position = "top",
+        legend.key.size = unit(.5, "lines"),
+        legend.box.spacing = unit(0, "mm"),
+        text = element_text(size = 8))
+ggsave("CategoricalBarplot.pdf", barplot,
+       width = 3, height = 2, dpi = 600)
+
+raincloud <- ggplot(data = df,
+                    aes(x = Intervention,
+                        y = StressLevel,
+                        fill = Intervention,
+                        colour = Intervention)) +
+  geom_flat_violin(position = position_nudge(x = .2, y = 0),
+                   alpha = .7, width = .7,
+                   colour = NA) +
+  geom_point(position = position_jitter(width = .15, height = 0),
+             size = .5, alpha = .5, show.legend = F) +
+  geom_boxplot(width = .1, show.legend = F,
+               outlier.shape = NA, alpha = .2,
+               colour = "black", lwd = .2) +
+  scale_color_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  coord_flip() + theme_bw() + facet_grid(.~PrePost) +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = "top",
+        legend.key.size = unit(.5, "lines"),
+        legend.box.spacing = unit(0, "mm"),
+        text = element_text(size = 8))
+ggsave("CategoricalRaincloud.pdf", raincloud,
+       width = 4, height = 2, dpi = 600)
 
 # DATA ANALYSIS ====================================================================================
 # Regular ANOVA
