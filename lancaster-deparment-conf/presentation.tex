@@ -57,7 +57,7 @@
 
 \subsection{Content of this talk}
 
-\begin{frame}{What too expect from this talk?}
+\begin{frame}{What to expect from this talk?}
 
   \vfill
   \begin{block}{What this talk is about}
@@ -90,16 +90,38 @@
   \vfill
   \pause
   \begin{center}
-  \begin{overlayarea}{4in}{2in}
-  \only<2>{\centering{\includegraphics{../src/CategoricalBarplot.pdf}}}
-  \only<3>{\centering{\includegraphics{../src/CategoricalRaincloud.pdf}}}
-  \end{overlayarea}
+  \includegraphics{../src/CategoricalRaincloud.pdf}
   \end{center}
   \vfill
 
 \end{frame}
 
-\begin{frame}{Regression and ANOVA results}
+\begin{frame}[fragile]{ANOVA and regression results}
+
+	\pause
+	\begin{block}{ANOVA results}
+		\verb|aov(StressLevel ~ Intervention*PrePost)|
+		\begin{tabular}{lccc}
+		Parameter            & Sum Square & F value & $Pr(>\mathrm{F})$   \\
+		\hline
+		Intervention         &     114381 &   164.8 & $<2\mathrm{e}{-16}$ \\
+		PrePost              &     185059 &   266.7 & $<2\mathrm{e}{-16}$ \\
+		Intervention:PrePost &     102808 &   148.2 & $<2\mathrm{e}{-16}$ \\
+		\end{tabular}
+	\end{block}
+	
+	\pause
+	\begin{block}{Regression results}
+		\verb|lm(StressLevel ~ Intervention*PrePost)|
+		\begin{tabular}{lcccc}
+		Parameter                                & Estimate & Std. Error & $t$ value & $Pr(>|t|)$          \\
+		\hline
+		(Intercept)                              &  150.703 &      3.725 &    40.453 & $<2\mathrm{e}{-16}$ \\
+		Intervention\uncover<4>{Video Game}   &    2.484 &      5.269 &     0.472 & 0.638               \\
+		PrePost\uncover<4>{Post Intervention} & -106.182 &      5.269 &   -20.154 & $<2\mathrm{e}{-16}$ \\
+		Intervention:PrePost                     &   90.960 &      7.451 &    12.172 & $<2\mathrm{e}{-16}$ \\
+		\end{tabular}
+	\end{block}
 
 \end{frame}
 
