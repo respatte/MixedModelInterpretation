@@ -4,6 +4,8 @@ library(tidyverse)
 library(RColorBrewer)
 source("geom_flat_violin.R")
 
+set.seed(89)
+
 # CATEGORICAL DATA GENERATION ======================================================================
 cat <- tibble(Participant = parse_factor(rep(1:100, 2), levels = NULL),
               Intervention = parse_factor(rep(c("Video Game", "Mindfulness Meditation"), 100),
@@ -45,7 +47,7 @@ cat.barplot <- ggplot(data = cat,
 ggsave("CategoricalBarplot.pdf", cat.barplot,
        width = 3, height = 2, dpi = 600)
 
-cat.raincloud <- ggplot(data = df,
+cat.raincloud <- ggplot(data = cat,
                         aes(x = Intervention,
                             y = StressLevel,
                             fill = Intervention,
@@ -75,7 +77,6 @@ ggsave("CategoricalRaincloud.pdf", cat.raincloud,
 # Regular ANOVA
 cat.anova <- aov(StressLevel ~ Intervention*PrePost,
                     data = cat)
-(summary(cat.anova))
 
 # Regular lm: same computations as ANOVA but different way of showing results
 ## From the aov function help:
@@ -84,7 +85,6 @@ cat.anova <- aov(StressLevel ~ Intervention*PrePost,
 ### rather than that of linear models.
 cat.lm <- lm(StressLevel ~ Intervention*PrePost,
                 data = cat)
-(summary(cat.lm))
 ## Result breakdown:
 ### Factor levels:
 #### Intervention = 0 for VideoGame, 1 for MindfulnessMeditation
@@ -114,17 +114,15 @@ cat.lm <- lm(StressLevel ~ Intervention*PrePost,
 # Mixed-effect model, just to compare output to ANOVA output and lm output
 cat.lmer <- lmer(StressLevel ~ Intervention*PrePost + (1 | Participant),
                     data = cat)
-(summary(cat.lmer))
 
 # Re-run aov and lm with different factor order for Intervention
 cat2 <- cat
 cat2$Intervention <- relevel(cat2$Intervention, ref = "Mindfulness Meditation") # New ref level
 cat.anova2 <- aov(StressLevel ~ Intervention*PrePost,
                      data = cat)
-(summary(cat.anova2)) # No difference
+## No difference
 cat.lm2 <- lm(StressLevel ~ Intervention*PrePost,
                 data = cat2)
-(summary(cat.lm2))    # Now main effect of PrePost because this is for participants in the
-                      # Mindfulness Meditation group only
+## Now main effect of PrePost because this is for participants in the Meditation group only
 ## We can run the same result breakdown as before, but now we have different factor levels:
 ### Intervention = 0 for MindfulnessMeditation, 1 for VideoGame
