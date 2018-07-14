@@ -14,6 +14,7 @@
 \usepackage{amsmath}
 \usepackage{tikz}
 \usepackage{xcolor}
+\usepackage{layouts}
 
 \title[Understandin regression results]{Regression Vs. ANOVA:\\Is a main effect really a main effect?}
 \author[A. Capelier-Mourguy]{Arthur Capelier-Mourguy}
@@ -86,7 +87,7 @@
 
 \subsection{Using categorical variables only}
 
-\begin{frame}{The simulated data}
+\begin{frame}{The simulated data with two categorical variables}
   
   \vfill
   Assessing stress levels after and before a 30 minutes intervention, ``mindfulness meditation'' or ``video games''.
@@ -268,15 +269,34 @@
 
 \subsection{Using continuous variables}
 
-\begin{frame}{Changes to the simulated data}
+\begin{frame}{A slightly less meaningfull example with a continuous variable}
+
+	\vfill
+	Assessing the difference between treatment A and treatment B in reducing stress levels each day over a week.
+	\pause
+	\vfill
+	
+	\begin{center}
+		\includegraphics{../src/Continuous.pdf}
+	\end{center}
+	\vfill
 
 \end{frame}
 
 \begin{frame}{Regression results}
 
-\end{frame}
-
-\begin{frame}{Graphically understanding the regression results}
+	\begin{center}
+		\begin{tabular}{lcccc}
+		Parameter      & Estimate & Std. Error & $t$ value & $Pr(>|t|)$           \\
+		\hline
+		(Intercept)    & 149.9317 &     2.5003 &    59.967 & $<2\mathrm{e}{-16}$  \\
+		TreatmentB     &  18.1489 &     3.5359 &     5.133 & $3.71\mathrm{e}{-7}$ \\
+		Day            &  -7.4051 &     0.6934 &   -10.679 & $<2\mathrm{e}{-16}$  \\
+		TreatmentB:Day & -16.7244 &     0.9807 &   -17.054 & $<2\mathrm{e}{-16}$  \\
+		\end{tabular}
+		
+		\includegraphics[height=2.07in]{../src/ContinuousPred.pdf}
+	\end{center}
 
 \end{frame}
 
@@ -290,7 +310,7 @@
 
 \subsection{Results}
 
-\begin{frame}{Something}
+\begin{frame}{Choosing reference levels}
 
 \end{frame}
 
