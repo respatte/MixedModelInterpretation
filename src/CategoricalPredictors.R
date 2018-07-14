@@ -151,8 +151,8 @@ cont.smooth <- ggplot(cont,
   geom_smooth() +
   scale_color_brewer(palette = "Dark2") +
   scale_fill_brewer(palette = "Dark2") +
-  theme_bw() + theme(legend.position = c(0.09,0.13),
+  theme_bw() + theme(legend.position = c(0.08,0.15),
                      legend.key.size = unit(.5, "lines"),
                      text = element_text(size = 8))
 ggsave("ContinuousSmooth.pdf", cont.smooth,
-       width = 5, height = 2.5, dpi = 600)
+       width = 4.7, height = 2.3, dpi = 600)
