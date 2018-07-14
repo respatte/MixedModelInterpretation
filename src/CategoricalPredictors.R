@@ -153,7 +153,7 @@ cont.plot <- ggplot(cont,
                 width = .1, colour = "black", lwd = .3) +
   geom_line(stat = "summary", fun.y = "mean",
             position = position_dodge(.2),
-            lwd = .3, show.legend = F) +
+            lwd = .3, show.legend = F, linetype = 2) +
   geom_point(stat = "summary", fun.y = "mean",
              position = position_dodge(.2),
              size = .5) +
@@ -163,4 +163,24 @@ cont.plot <- ggplot(cont,
                      legend.key.size = unit(.5, "lines"),
                      text = element_text(size = 8))
 ggsave("Continuous.pdf", cont.plot,
+       width = 4.7, height = 2.3, dpi = 600)
+
+# CONTINUOUS DATA ANALYSIS =========================================================================
+cont.lm <- lm(StressLevel ~ Treatment*Day,
+              data = cont)
+# Plot parameter-defined lines on top of data
+fe <- coef(cont.lm)
+cont.lm.lines <- tibble(Treatment = c("A", "B"),
+                        intercept = c(fe[["(Intercept)"]],
+                                      fe[["(Intercept)"]] + fe[["TreatmentB"]]),
+                        slope = c(fe[["Day"]],
+                                  fe[["Day"]] + fe[["TreatmentB:Day"]]))
+cont.lm.plot <- cont.plot +
+  geom_abline(data = cont.lm.lines,
+              aes(intercept = intercept,
+                  slope = slope,
+                  colour = Treatment),
+              lwd = .5, show.legend = F) +
+  expand_limits(y = max(cont.lm.lines$intercept) + 5)
+ggsave("ContinuousPred.pdf", cont.lm.plot,
        width = 4.7, height = 2.3, dpi = 600)
