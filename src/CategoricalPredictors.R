@@ -154,5 +154,5 @@ cont.smooth <- ggplot(cont,
   theme_bw() + theme(legend.position = c(0.09,0.13),
                      legend.key.size = unit(.5, "lines"),
                      text = element_text(size = 8))
-ggsave("ContinousSmooth.pdf", cont.smooth,
+ggsave("ContinuousSmooth.pdf", cont.smooth,
        width = 5, height = 2.5, dpi = 600)
