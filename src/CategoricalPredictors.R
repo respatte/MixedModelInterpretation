@@ -4,7 +4,7 @@ library(tidyverse)
 library(RColorBrewer)
 source("geom_flat_violin.R")
 
-set.seed(89)
+set.seed(67)
 
 # CATEGORICAL DATA GENERATION ======================================================================
 cat <- tibble(Participant = parse_factor(rep(1:100, 2), levels = NULL),
@@ -126,3 +126,33 @@ cat.lm2 <- lm(StressLevel ~ Intervention*PrePost,
 ## Now main effect of PrePost because this is for participants in the Meditation group only
 ## We can run the same result breakdown as before, but now we have different factor levels:
 ### Intervention = 0 for MindfulnessMeditation, 1 for VideoGame
+
+# CONTINOUS DATA GENERATION ========================================================================
+cont <- tibble(Participant = parse_factor(rep(1:100, 7), levels = NULL),
+               Treatment = parse_factor(rep(c("A", "B"), 350),
+                                           levels = c("A",    # Reference level
+                                                      "B")),  # Comparison level)
+               Day = rep(0:6, each = 100),
+               StressLevel = ifelse(Treatment == "A",
+                                    150 - 7 * Day,
+                                    ifelse(Day <= 1, 150, 200 - 31 * Day)
+               )  +
+                 rnorm(700, 0, 25) +      # General variance
+                 rep(rnorm(100, 0, 5), 7) # Participant-specific variance
+) %>%
+  mutate(StressLevel = pmax(StressLevel, 0))
+
+# CONTINUOUS DATA DESCRIPTION ======================================================================
+cont.smooth <- ggplot(cont,
+                      aes(x = Day,
+                          y = StressLevel,
+                          colour = Treatment,
+                          fill = Treatment)) +
+  geom_smooth() +
+  scale_color_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme_bw() + theme(legend.position = c(0.09,0.13),
+                     legend.key.size = unit(.5, "lines"),
+                     text = element_text(size = 8))
+ggsave("ContinousSmooth.pdf", cont.smooth,
+       width = 5, height = 2.5)
