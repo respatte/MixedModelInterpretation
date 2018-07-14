@@ -143,16 +143,24 @@ cont <- tibble(Participant = parse_factor(rep(1:100, 7), levels = NULL),
   mutate(StressLevel = pmax(StressLevel, 0))
 
 # CONTINUOUS DATA DESCRIPTION ======================================================================
-cont.smooth <- ggplot(cont,
+cont.plot <- ggplot(cont,
                       aes(x = Day,
                           y = StressLevel,
                           colour = Treatment,
                           fill = Treatment)) +
-  geom_smooth() +
+  geom_errorbar(stat = "summary", fun.data = "mean_se",
+                position = position_dodge(.2),
+                width = .1, colour = "black", lwd = .3) +
+  geom_line(stat = "summary", fun.y = "mean",
+            position = position_dodge(.2),
+            lwd = .3, show.legend = F) +
+  geom_point(stat = "summary", fun.y = "mean",
+             position = position_dodge(.2),
+             size = .5) +
   scale_color_brewer(palette = "Dark2") +
   scale_fill_brewer(palette = "Dark2") +
   theme_bw() + theme(legend.position = c(0.08,0.15),
                      legend.key.size = unit(.5, "lines"),
                      text = element_text(size = 8))
-ggsave("ContinuousSmooth.pdf", cont.smooth,
+ggsave("Continuous.pdf", cont.plot,
        width = 4.7, height = 2.3, dpi = 600)
